@@ -1,4 +1,4 @@
-# Welcome to the Free Dividend Calculator GitHub Repository
+# Welcome to the Free Dividend Calculator GitHub Repository!
 
 This is the GitHub repository for the Free Dividend Calculator which is available to use for free at: www.freedividendcalculator.com.
 The code for the Free Dividend Calculator has been made available on this repository so people can see how it was implemented.
