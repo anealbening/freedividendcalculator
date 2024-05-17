@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dividend Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    #container {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      margin: 40px auto;
+      width: 80%;
+    }
+    #calculator, #leftBox, #rightBox {
+      width: 300px;
+      background-color: #f0f0f0;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    #stocksList {
+      margin-top: 20px;
+    }
+    .stock {
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #fff;
+    }
+    .removeStock {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 10px; /* Add margin to separate from input fields */
+    }
+    .dividend, .shares {
+      width: 100%; /* Full width to avoid alignment issues */
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+      <li class="calculator-link">
+        <a href="https://anealbening.azurewebsites.net/dividendcalculator.html">
+          <i class="fas fa-dollar-sign"></i>
+          Free Dividend Calculator
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <p><strong>NEW FEATURES:</strong> Now you can add and remove stocks from the dividend calculator. We've also included a box which contains the stock prices of popular dividend stocks</p>
+  
+  <div id="container">
+    <div id="leftBox">
+      <p><strong>Welcome to the Free Dividend Calculator!</strong></p>
+      <p>Here you can calculate what dividends you will receive based on the dividend payment and the number of shares you hold. More features will be added over the next few weeks!</p>
+    </div>
+
+    <div id="calculator">
+      <h2>Free Dividend Calculator</h2>
+      <form id="dividendForm">
+        <div id="stocksList">
+          <div class="stock">
+            <label for="dividend">Dividend per Share in $:</label>
+            <input type="number" class="dividend" value="2">
+            <br>
+            <label for="shares">Total Number of Shares Held:</label>
+            <input type="number" class="shares" value="100">
+            <br>
+            <button type="button" class="removeStock">X Remove Stock</button>
+          </div>
+        </div>
+        <button type="button" id="addStock">Add another stock</button>
+        <button type="button" id="calculate">Calculate</button>
+        <p id="result"></p>
+        <p></p>
+      </form>
+    </div>
+
+    <div id="rightBox">
+      <p><strong>Live Stock Prices of Popular Dividend Stocks</strong></p>
+      <ul id="stockPrices">
+        <p>McDonald's: $<span id="MCD">Loading...</span></p>
+        <p>CocaCola Company: $<span id="KO">Loading...</span></p>
+        <p>PepsiCo: $<span id="PEP">Loading...</span></p>
+        <p>Starbucks: $<span id="SBUX">Loading...</span></p>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('calculate').addEventListener('click', (event) => {
+      event.preventDefault();
+      let totalDividend = 0;
+      const dividends = document.querySelectorAll('.dividend');
+      const shares = document.querySelectorAll('.shares');
+      
+      dividends.forEach((div, index) => {
+        const dividend = parseFloat(div.value);
+        const share = parseInt(shares[index].value);
+        totalDividend += dividend * share;
+      });
+
+      document.getElementById('result').innerText = `Total Dividend: $${totalDividend.toFixed(2)}`;
+    });
+
+    document.getElementById('addStock').addEventListener('click', (event) => {
+      event.preventDefault();
+      const newStock = document.createElement('div');
+      newStock.className = 'stock';
+      newStock.innerHTML = `
+        <label for="dividend">Dividend per Share in $:</label>
+        <input type="number" class="dividend" value="0">
+        <br>
+        <label for="shares">Total Number of Shares Held:</label>
+        <input type="number" class="shares" value="0">
+        <br>
+        <button type="button" class="removeStock">X Remove Stock</button>
+      `;
+      document.getElementById('stocksList').appendChild(newStock);
+      addRemoveEvent(newStock);
+    });
+
+    function addRemoveEvent(stockElement) {
+      stockElement.querySelector('.removeStock').addEventListener('click', (event) => {
+        event.preventDefault();
+        if (document.querySelectorAll('.stock').length > 1) {
+          stockElement.remove();
+        } else {
+          alert('You must have at least one stock.');
+        }
+      });
+    }
+
+    document.querySelectorAll('.stock').forEach(stock => {
+      addRemoveEvent(stock);
+    });
+
+    async function fetchStockPrices() {
+      const apiKey = 'pk_a9c4d4b6946348018a612e0850428d47'; // Replace with your IEX Cloud API key
+      const urls = {
+        MCD: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=MCD&token=${apiKey}`,
+        KO: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=KO&token=${apiKey}`,
+        PEP: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=PEP&token=${apiKey}`,
+        SBUX: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=SBUX&token=${apiKey}`
+      };
+
+      for (const [index, url] of Object.entries(urls)) {
+        try {
+          const response = await fetch(url);
+          const data = await response.json();
+          const price = data[0].latestPrice;
+          document.getElementById(index).innerText = price ? price.toFixed(2) : 'Error';
+        } catch (error) {
+          document.getElementById(index).innerText = 'Error';
+        }
+      }
+    }
+
+    fetchStockPrices();
+    setInterval(fetchStockPrices, 60000); // Update prices every 60 seconds
+  </script>
+  
+  <p><strong>iOS AND ANDROID APP COMING SOON!</strong></p>
+  
+  <p></p>
+  
+  <p>Disclaimer: We accept no liability or responsibility for any errors from the use of this website!</p>
+</body>
+<footer>
+  <p>Copyright - Aneal Bening 2024</p>
+</footer>
+</html>
