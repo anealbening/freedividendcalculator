@@ -148,7 +148,7 @@
     });
 
     async function fetchStockPrices() {
-      const apiKey = 'pk_a9c4d4b6946348018a612e0850428d47'; // Replace with your IEX Cloud API key
+      const apiKey = ''; // Replace with your IEX Cloud API key
       const urls = {
         MCD: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=MCD&token=${apiKey}`,
         KO: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=KO&token=${apiKey}`,
@@ -169,7 +169,7 @@
     }
 
     fetchStockPrices();
-    setInterval(fetchStockPrices, 60000); // Update prices every 60 seconds
+    setInterval(fetchStockPrices, 60000); // Updates prices every 60 seconds
   </script>
   
   <p><strong>iOS AND ANDROID APP COMING SOON!</strong></p>
