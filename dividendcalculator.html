@@ -41,10 +41,10 @@
       padding: 5px;
       cursor: pointer;
       border-radius: 5px;
-      margin-top: 10px; /* Add margin to separate from input fields */
+      margin-top: 10px; 
     }
     .dividend, .shares {
-      width: 100%; /* Full width to avoid alignment issues */
+      width: 100%; 
       box-sizing: border-box;
     }
   </style>
@@ -148,7 +148,7 @@
     });
 
     async function fetchStockPrices() {
-      const apiKey = ''; // Replace with your IEX Cloud API key
+      const apiKey = ''; // NOTE: IEX CLOUD is now obsolete and has been shut down so you will need to change this part of the script with a different API. I personally recommend creating your own API using Google Cloud.
       const urls = {
         MCD: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=MCD&token=${apiKey}`,
         KO: `https://cloud.iexapis.com/stable/stock/market/quote?symbols=KO&token=${apiKey}`,
